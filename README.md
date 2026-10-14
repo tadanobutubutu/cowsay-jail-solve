@@ -71,18 +71,18 @@ subprocess.run(
 
 ```mermaid
 sequenceDiagram
-    participant U as 解く人 (solve.py)
+    participant U as "解く人 (solve.py)"
     participant J as jail.py
-    participant S as /bin/sh
-    participant F as /flag.txt
+    participant S as "/bin/sh"
+    participant F as "/flag.txt"
     U->>J: 接続後、ペイロードを 1 行送信
-    Note over U: ;cat${IFS}/flag.txt
-    J->>J: deny_list で文字を検査
-    Note over J: スペース等は含まれていない → 通過
-    J->>S: cowsay ;cat${IFS}/flag.txt
-    S->>S: ${IFS} を空白に展開
-    S->>S: cowsay を実行（アスキーアート）
-    S->>F: cat /flag.txt
+    Note over U: "#59;cat#36;#123;IFS#125;/flag.txt"
+    J->>J: "deny_list で文字を検査"
+    Note over J: "スペース等は含まれていない → 通過"
+    J->>S: "cowsay #59;cat#36;#123;IFS#125;/flag.txt"
+    S->>S: "#36;#123;IFS#125; を空白に展開"
+    S->>S: "cowsay を実行（アスキーアート）"
+    S->>F: "cat /flag.txt"
     F-->>U: フラグ文字列
 ```
 
@@ -111,13 +111,19 @@ cowsay hello; cat /flag.txt
 > [!WARNING]
 > 一見便利そうな `;cat</flag.txt`（スペースなしのリダイレクト）は、この問題では **使えません**。`deny_list` に `<` が含まれているためです。スペース回避だけを考えると見落としやすい点です。
 
-### ${IFS} によるスペース回避
+### IFS（パラメータ展開）によるスペース回避
 Bash / sh には **IFS**（Internal Field Separator）という変数があります。既定値はスペース・タブ・改行を含むので、パラメータ展開 ``${IFS}`` は「空白 1 文字」として使えます。
 
+展開のイメージは次のとおりです。
+
+| シェルへの入力 | 展開後 |
+| :--- | :--- |
+| `cat${IFS}/flag.txt` | `cat /flag.txt` |
+
 $$
-\texttt{cat\$\{IFS\}/flag.txt}
-\;\;\xrightarrow{\text{シェル展開}}\;\;
-\texttt{cat /flag.txt}
+\text{before}
+\xrightarrow{\text{シェル展開}}
+\text{after}
 $$
 
 しかも `$`・`{`・`}`・`/`・文字・`;` はいずれも `deny_list` に入っていません。

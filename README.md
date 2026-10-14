@@ -114,17 +114,15 @@ cowsay hello; cat /flag.txt
 ### IFS（パラメータ展開）によるスペース回避
 Bash / sh には **IFS**（Internal Field Separator）という変数があります。既定値はスペース・タブ・改行を含むので、パラメータ展開 ``${IFS}`` は「空白 1 文字」として使えます。
 
-展開のイメージは次のとおりです。
-
-| シェルへの入力 | 展開後 |
-| :--- | :--- |
-| `cat${IFS}/flag.txt` | `cat /flag.txt` |
+シェルが `${IFS}` を空白に展開する様子を式で書くと、次のようになります。
 
 $$
-\text{before}
-\xrightarrow{\text{シェル展開}}
-\text{after}
+\texttt{cat}\mathbin{\$}\texttt{\{IFS\}/flag.txt}
+\xrightarrow{\text{expand}}
+\texttt{cat /flag.txt}
 $$
+
+（左が送信ペイロード、右がシェル展開後に実行される形。）
 
 しかも `$`・`{`・`}`・`/`・文字・`;` はいずれも `deny_list` に入っていません。
 

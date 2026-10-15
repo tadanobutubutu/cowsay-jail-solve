@@ -71,7 +71,7 @@ subprocess.run(
 
 ```mermaid
 sequenceDiagram
-    participant U as "解く人 (solve.py)"
+    participant U as 解く人
     participant J as jail.py
     participant S as "/bin/sh"
     participant F as "/flag.txt"
